@@ -13,8 +13,7 @@ const samples = {
 // fetch samples
 const samplePromises = [ fetch(samples.kick), fetch(samples.hat), fetch(samples.snare) ];
 
-Promise.all(samplePromises)
-.then((sampleResponses) => {
+Promise.all(samplePromises).then((sampleResponses) => {
 	sampleResponses.forEach((response, i) => {
 		response.arrayBuffer().then((arrayBuffer) => {
 			context.decodeAudioData(arrayBuffer, (audioBuffer) => {
@@ -25,18 +24,18 @@ Promise.all(samplePromises)
 });
 
 // create source in audio context and add audio buffer to it
-function playSample(sample, beat) {
-	var time = beat * 0.46; // about 130 bpm 
+function playSample(sample, bar) {
+	var time = bar * 0.46; // about 130 bpm 
 	var source = context.createBufferSource();
 	source.buffer = buffers[sample];
 	source.connect(context.destination);
 	source.start(context.currentTime + time);
 }
 
-function playPhrase(firstBeat, noteObject) {
+function playPhrase(firstBar, noteObject) {
 	for (sample in noteObject) {
-		noteObject[sample].forEach((beat) => {
-			playSample(sample, beat + firstBeat);
+		noteObject[sample].forEach((bar) => {
+			playSample(sample, bar + firstBar);
 		});	
 	}
 }
@@ -50,15 +49,15 @@ const verse = {
 	snare: [ 1, 3, 5, 7 ]
 };
 
-function playIntro(firstBeat) {
-	playPhrase(firstBeat, intro);
+function playIntro(firstBar) {
+	playPhrase(firstBar, intro);
 }
 
-function playVerse(firstBeat) {
-	playPhrase(firstBeat, verse)
+function playVerse(firstBar) {
+	playPhrase(firstBar, verse)
 
-	if (firstBeat < 200) {
-		playVerse(firstBeat + 8, verse);	
+	if (firstBar < 200) {
+		playVerse(firstBar + 8, verse);	
 	}
 }
 
