@@ -11,7 +11,7 @@ const samples = {
 };
 
 // fetch samples
-const samplePromises = [ fetch(samples.kick), fetch(samples.hat), fetch(samples.snare) ];
+const samplePromises = [ fetch(samples.kick), fetch(samples.hat), fetch(samples.snare) ]; // Object.values
 
 Promise.all(samplePromises).then((sampleResponses) => {
 	sampleResponses.forEach((response, i) => {
