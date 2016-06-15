@@ -40,27 +40,6 @@ function playPhrase(firstBar, noteObject) {
 	}
 }
 
-// sequences
-const intro = { kick: [ 0, 1, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7 ] };
-
-const verse = {
-	kick: [ 0, 1, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7 ],
-	hat: [ 0.5, 0.75, 1.5, 1.75, 2.5, 2.75, 3.5, 3.75, 4.5, 4.75, 5.5, 5.75, 6.5, 6.75, 7.5, 7.75 ],
-	snare: [ 1, 3, 5, 7 ]
-};
-
-function playIntro(firstBar) {
-	playPhrase(firstBar, intro);
-}
-
-function playVerse(firstBar) {
-	playPhrase(firstBar, verse)
-
-	if (firstBar < 200) {
-		playVerse(firstBar + 8, verse);	
-	}
-}
-
 ///\\\ *** SYNTHESIZER *** \\\///
 
 // create a filter and a gain node
@@ -89,14 +68,51 @@ function playOscillator(frequency) {
 	oscillator.stop(context.currentTime + 0.25);
 }
 
+///\\\ *** CANVAS *** \\\///
+
+const sequence = { kick: [], snare: [], hat: [] };
+
+function createTrack(canvas, sample, colour) {
+	const ctx = canvas.getContext('2d');
+
+	ctx.fillStyle = colour;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	const barWidth = canvas.width / 8; // 8 bar phrase
+	
+	for (let i = 1 ; i < 8 ; i++) {
+		ctx.beginPath();
+		ctx.strokeStyle = 'white';
+		ctx.moveTo(barWidth * i, 0);
+		ctx.lineTo(barWidth * i, canvas.height);
+		ctx.stroke();
+	}
+
+	canvas.addEventListener('click', function(event) {
+		const canvasRect = canvas.getBoundingClientRect();
+
+		const clickPos = {
+			x: event.clientX - canvasRect.left,
+			y: event.clientY - canvasRect.top
+		};
+
+		ctx.fillStyle = 'white';
+		ctx.fillRect(clickPos.x, 0, 5, canvas.height);
+
+		sequence[sample].push(clickPos.x / barWidth);
+	});
+}
+
+createTrack(document.getElementById('kick-track'), 'kick', 'black');
+createTrack(document.getElementById('snare-track'), 'snare', 'green');
+createTrack(document.getElementById('hat-track'), 'hat', 'red');
+
 ///\\\ *** INTERACTION *** \\\///
 
 window.onkeydown = function(event) {
 	switch(event.keyCode) {
 	    case 65:
-	    	playIntro(0);
-	    	playIntro(8);
-	        playVerse(16);
+	    	playPhrase(0, sequence);
 	        break;
 	    case 72:
 	        playOscillator(65.41);
