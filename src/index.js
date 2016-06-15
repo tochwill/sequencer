@@ -105,7 +105,7 @@ function createTrack(canvas, sample, colour) {
 
 createTrack(document.getElementById('kick-track'), 'kick', 'black');
 createTrack(document.getElementById('snare-track'), 'snare', 'green');
-createTrack(document.getElementById('hat-track'), 'hat', 'red');
+createTrack(document.getElementById('hat-track'), 'hat', 'purple');
 
 ///\\\ *** INTERACTION *** \\\///
 
